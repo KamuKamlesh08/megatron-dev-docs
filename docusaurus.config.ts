@@ -6,8 +6,10 @@ const config: Config = {
   favicon: "img/favicon.ico",
 
   // ✅ Main GitHub Pages URL setup
-  url: "https://KamuKamlesh08.github.io",
-  baseUrl: "/megatron-dev-docs/",
+  //url: "https://KamuKamlesh08.github.io",
+  //baseUrl: "/megatron-dev-docs/",
+  url: "https://docs.captaink.in", // or https://captaink.in if you host on root
+  baseUrl: "/",
 
   organizationName: "KamuKamlesh08", // GitHub user/org
   projectName: "megatron-dev-docs", // GitHub repo name
