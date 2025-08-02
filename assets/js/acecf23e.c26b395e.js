@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmegatron_dev_docs=self.webpackChunkmegatron_dev_docs||[]).push([[903],{1912:e=>{e.exports=JSON.parse('{"blogBasePath":"/megatron-dev-docs/blog","blogTitle":"Blog","authorsListPath":"/megatron-dev-docs/blog/authors"}')}}]);
