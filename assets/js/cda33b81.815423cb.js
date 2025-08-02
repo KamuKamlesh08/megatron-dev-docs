@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmegatron_dev_docs=self.webpackChunkmegatron_dev_docs||[]).push([[580],{2038:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/megatron-dev-docs/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
