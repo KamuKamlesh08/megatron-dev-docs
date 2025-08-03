@@ -27,7 +27,7 @@ const config: Config = {
       title: "Megatron",
       logo: {
         alt: "Megatron Logo",
-        src: "img/megatron-logo.png",
+        src: "img/megatron-docs.png",
       },
       items: [
         {
