@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmegatron_dev_docs=self.webpackChunkmegatron_dev_docs||[]).push([[9858],{5516:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-blog","id":"default"}')}}]);
