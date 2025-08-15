@@ -1,0 +1,90 @@
+@startuml
+title Megatron Store – Initial User Load & Personalized Homepage (Event Driven, Colorful)
+
+skinparam backgroundColor #f3f4f6
+skinparam componentStyle rectangle
+skinparam shadowing true
+skinparam roundCorner 12
+skinparam defaultFontName "Arial"
+
+skinparam component<<API>> {
+  BackgroundColor #dbeafe
+  BorderColor #2563eb
+  FontColor #1e293b
+}
+skinparam component<<Service>> {
+  BackgroundColor #fef9c3
+  BorderColor #f59e42
+  FontColor #78350f
+}
+skinparam database {
+  BackgroundColor #dcfce7
+  BorderColor #22c55e
+  FontColor #14532d
+}
+skinparam artifact {
+  BackgroundColor #fce7f3
+  BorderColor #db2777
+  FontColor #831843
+}
+
+' Top: User & UI
+component "User\n(Ravi, Delhi)" as USER <<API>>
+component "Web/Mobile UI" as UI <<API>>
+
+' Gateway
+component "API Gateway" as APIGW <<API>>
+
+' Middle: Services
+component "Product Service" as PROD_SVC <<Service>>
+component "Recommendation Service" as RECO_SVC <<Service>>
+component "Cart Service" as CART_SVC <<Service>>
+
+' Infra
+artifact "Redis Cluster" as REDIS
+database "MySQL\nProduct DB" as DB_PROD
+database "MySQL\nRecommendation DB" as DB_RECO
+database "MySQL\nCart DB" as DB_CART
+
+' Flows
+USER -[#2563eb]-> UI : 1. Open Website/App
+UI -[#2563eb]-> APIGW : 2. Send city, userId
+
+' Parallel backend orchestration
+APIGW -[#f59e42]-> PROD_SVC : 3a. Get Trending (city, category)
+APIGW -[#f59e42]-> RECO_SVC : 3b. Get Recommendations (userId)
+APIGW -[#f59e42]-> CART_SVC : 3c. Get Cart (userId)
+
+' Redis cache checks
+PROD_SVC -[#db2777,dashed]-> REDIS : 4a. Check trending:{city}:{cat}
+RECO_SVC -[#db2777,dashed]-> REDIS : 4b. Check recommend:{userId}
+CART_SVC -[#db2777,dashed]-> REDIS : 4c. Check cart:{userId}
+
+' On cache miss, fetch from DB
+PROD_SVC -[#22c55e,dashed]-> DB_PROD : 5a. Query trending
+RECO_SVC -[#22c55e,dashed]-> DB_RECO : 5b. Query recommendations
+CART_SVC -[#22c55e,dashed]-> DB_CART : 5c. Query cart
+
+' Set Redis after DB fetch
+PROD_SVC -[#db2777,dotted]-> REDIS : 6a. Set trending
+RECO_SVC -[#db2777,dotted]-> REDIS : 6b. Set recommend
+CART_SVC -[#db2777,dotted]-> REDIS : 6c. Set cart
+
+' All responses return to API Gateway
+PROD_SVC -[#f59e42]-> APIGW : 7a. Trending List
+RECO_SVC -[#f59e42]-> APIGW : 7b. Recommendations
+CART_SVC -[#f59e42]-> APIGW : 7c. Cart Items
+
+APIGW -[#2563eb]-> UI : 8. Aggregated Homepage Data
+UI -[#2563eb]-> USER : 9. Show personalized homepage
+
+' Legend
+legend right
+<b>REST Call</b> — plain orange line<br>
+<b>Redis/Infra</b> — pink dashed/dotted<br>
+<b>DB Query</b> — green dashed<br>
+<b>API / Gateway</b> — blue<br>
+<b>Domain Services</b> — yellow<br>
+<b>MySQL Databases</b> — green<br>
+endlegend
+@enduml
