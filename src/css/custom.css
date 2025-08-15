@@ -29,10 +29,10 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
-.navbar__logo img {
-  height: 90px !important; /* default is around 32px */
-}
+/* :root .navbar__logo img {
+  height: 50px !important;
+} */
 
-.navbar__logo {
-  padding: 1px;
-}
+/* :root .navbar__logo {
+  margin: 1px !important;
+} */

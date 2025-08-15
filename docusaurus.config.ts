@@ -5,16 +5,12 @@ const config: Config = {
   tagline: "By Kamu Kamlesh — Experiments. Architecture. Engineering.",
   favicon: "img/favicon.ico",
 
-  // ✅ Main GitHub Pages URL setup
-  //url: "https://KamuKamlesh08.github.io",
-  //baseUrl: "/megatron-dev-docs/",
-  url: "https://docs.captaink.in", // or https://captaink.in if you host on root
+  url: "https://docs.captaink.in",
   baseUrl: "/",
 
   organizationName: "KamuKamlesh08", // GitHub user/org
   projectName: "megatron-dev-docs", // GitHub repo name
 
-  // ✅ Highly recommended to fix trailingSlash warning
   trailingSlash: false,
 
   i18n: {
@@ -31,17 +27,17 @@ const config: Config = {
       },
       items: [
         {
-          to: "/docs/projects/ecom-system",
+          to: "/docs/projects/auth-system",
           label: "Projects",
           position: "left",
         },
         {
-          to: "/docs/architecture/ecom-architecture",
+          to: "/docs/architecture/e-commerce",
           label: "Architecture",
           position: "left",
         },
         {
-          to: "/docs/notes/docker-tips",
+          to: "/docs/notes",
           label: "Notes",
           position: "left",
         },

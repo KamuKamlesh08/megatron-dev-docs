@@ -1,0 +1,100 @@
+@startuml
+title Order Checkout Architecture – Megatron Store (Event Driven, Numbered Steps)
+
+skinparam backgroundColor #f3f4f6
+skinparam componentStyle rectangle
+skinparam shadowing true
+skinparam roundCorner 12
+skinparam defaultFontName "Arial"
+
+skinparam component<<API>> {
+  BackgroundColor #dbeafe
+  BorderColor #2563eb
+  FontColor #1e293b
+}
+skinparam component<<Service>> {
+  BackgroundColor #fef9c3
+  BorderColor #f59e42
+  FontColor #78350f
+}
+skinparam database {
+  BackgroundColor #dcfce7
+  BorderColor #22c55e
+  FontColor #14532d
+}
+skinparam artifact {
+  BackgroundColor #fce7f3
+  BorderColor #db2777
+  FontColor #831843
+}
+
+' Top Row: Client & Gateway
+component "Web/Mobile UI" as UI <<API>>
+component "API Gateway" as APIGW <<API>>
+
+' Middle Row: Core Services
+component "Cart Service" as CART_SVC <<Service>>
+component "Order Service" as ORDER_SVC <<Service>>
+component "Inventory Service" as INV_SVC <<Service>>
+component "Payment Service" as PAY_SVC <<Service>>
+component "Notification Service" as NOTIF_SVC <<Service>>
+
+' Infra Row
+artifact "Kafka Cluster" as KAFKA
+artifact "Redis" as REDIS
+
+' DB/External Row
+database "orders_db" as DB_ORDERS
+database "inventory_db" as DB_INV
+database "payment_db" as DB_PAY
+component "Payment Gateway" as EXT_PAY
+
+' REST Calls (plain, service color) with numbered steps
+UI -[#f59e42]-> APIGW : 1. REST Checkout
+APIGW -[#f59e42]-> CART_SVC : 2. REST getCart
+CART_SVC -[#f59e42]-> REDIS : 3. Session/Cart
+CART_SVC -[#f59e42]-> APIGW : 4. Cart Details
+APIGW -[#f59e42]-> ORDER_SVC : 5. REST createOrder
+
+ORDER_SVC -[#f59e42]-> DB_ORDERS : 6. Write Order
+
+ORDER_SVC -[#f59e42]-> NOTIF_SVC : 13. Notify User (sync)
+NOTIF_SVC -[#f59e42]-> KAFKA : 14. Notification Event
+
+PAY_SVC -[#f59e42]-> EXT_PAY : 10. Payment API
+PAY_SVC -[#f59e42]-> DB_PAY : 11. Payment Txn
+
+INV_SVC -[#f59e42]-> DB_INV : 8. Reserve Stock
+
+' Event-driven (dotted, service color) with numbered steps
+ORDER_SVC ..[#f59e42]..> KAFKA : 7. OrderPlaced (event)
+KAFKA ..[#f59e42]..> INV_SVC : 8. ReserveInventory (event)
+INV_SVC ..[#f59e42]..> KAFKA : 9. InventoryReserved/Failed (event)
+KAFKA ..[#f59e42]..> PAY_SVC : 10. TriggerPayment (event)
+PAY_SVC ..[#f59e42]..> KAFKA : 12. PaymentConfirmed/Failed (event)
+KAFKA ..[#f59e42]..> ORDER_SVC : 12. Payment/Inventory Result (event)
+
+' Layout hints for clarity
+UI -[hidden]-> APIGW
+APIGW -[hidden]-> CART_SVC
+CART_SVC -[hidden]-> ORDER_SVC
+ORDER_SVC -[hidden]-> INV_SVC
+INV_SVC -[hidden]-> PAY_SVC
+PAY_SVC -[hidden]-> NOTIF_SVC
+NOTIF_SVC -[hidden]-> KAFKA
+KAFKA -[hidden]-> REDIS
+REDIS -[hidden]-> DB_ORDERS
+DB_ORDERS -[hidden]-> DB_INV
+DB_INV -[hidden]-> DB_PAY
+DB_PAY -[hidden]-> EXT_PAY
+
+' Legend
+legend right
+<b>REST Call</b> — plain orange line<br>
+<b>Event Driven</b> — dotted orange line<br>
+<b>API / Gateway</b> — blue<br>
+<b>Domain Services</b> — yellow<br>
+<b>MySQL Databases</b> — green<br>
+<b>Infra/External</b> — pink
+endlegend
+@enduml

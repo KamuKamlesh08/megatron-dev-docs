@@ -19,15 +19,12 @@ export default function Home(): JSX.Element {
         </div>
 
         <div className={styles.tiles}>
-          <Link className={styles.card} to="/docs/projects/ecom-system">
+          <Link className={styles.card} to="/docs/projects/auth-system">
             <h3>Projects</h3>
             <p>Explore microservices, APIs, event-driven POCs and more.</p>
           </Link>
 
-          <Link
-            className={styles.card}
-            to="/docs/architecture/ecom-architecture"
-          >
+          <Link className={styles.card} to="/docs/architecture/e-commerce">
             <h3>Architecture</h3>
             <p>View system diagrams, infra design, CI/CD pipelines etc.</p>
           </Link>

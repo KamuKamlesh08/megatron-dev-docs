@@ -1,6 +1,6 @@
-# 🐳 Docker Tips for Java Projects
+# Docker Tips for Java Projects
 
-## 📦 Use Multi-Stage Builds
+## Use Multi-Stage Builds
 
 ```dockerfile
 FROM maven:3.8.5-openjdk-17 AS builder
