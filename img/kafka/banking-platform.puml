@@ -1,0 +1,44 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!theme vibrant
+AddRelTag("event", $lineStyle="Dashed")
+AddRelTag("fail",  $lineStyle="Dashed", $lineColor="Red", $textColor="Red")
+
+Person(user, "Kamu Kamlesh", "Customer using Mobile/Web App")
+
+System_Boundary(bank, "Banking Platform") {
+
+  Container(app, "Mobile/Web App", "Android/iOS/Web", "Step 0: Form + Docs")
+  Container(api, "Onboarding API", "Spring Boot", "Step 1: Publish onboarding")
+
+  Container_Boundary(kafkaB, "Kafka Cluster") {
+    Component(t_onb,      "1. onboarding.requested", "Topic", "New request")
+    Component(t_idv_pass, "2. identity.verified", "Topic", "KYC/AML PASS")
+    Component(t_idv_fail, "2. identity.failed",   "Topic", "KYC/AML FAIL")
+    Component(t_acct,     "3. account.created",  "Topic", "Account opened")
+    Component(t_note,     "4. customer.notified",   "Topic", "User notified")
+  }
+
+  Container(identity, "Identity Service", "Service", "KYC + AML check")
+  Container(account,  "Account Service",  "Core Banking", "Account creation")
+  Container(notify,   "Notify Service",   "Service", "SMS/Email/Push")
+}
+
+Rel(user, app, "Fill form + upload docs")
+Rel(app, api, "POST /onboard")
+
+Rel(api, t_onb, "Publish onboarding", "Kafka", $tags="event")
+
+Rel(identity, t_onb,      "Consume", "Kafka", $tags="event")
+Rel(identity, t_idv_pass, "Publish", "Kafka", $tags="event")
+Rel(identity, t_idv_fail, "Publish", "Kafka", $tags="fail")
+
+Rel(account, t_idv_pass, "Consume PASS", "Kafka", $tags="event")
+Rel(account, t_acct,     "Publish", "Kafka", $tags="event")
+
+Rel(notify, t_acct,     "Consume success", "Kafka", $tags="event")
+Rel(notify, t_idv_fail, "Consume fail", "Kafka", $tags="fail")
+Rel(notify, t_note,     "Publish notify", "Kafka", $tags="event")
+
+SHOW_LEGEND()
+@enduml
