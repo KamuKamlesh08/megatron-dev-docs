@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+
+title Kafka Partitions Analogy
+
+actor Producer as P
+actor ConsumerGroup as CG
+
+rectangle "Topic: Orders (Train)" {
+  rectangle "Partition-0 (Compartment)" {
+    [Seat #0: Message A]
+    [Seat #1: Message B]
+  }
+  rectangle "Partition-1 (Compartment)" {
+    [Seat #0: Message C]
+    [Seat #1: Message D]
+  }
+  rectangle "Partition-2 (Compartment)" {
+    [Seat #0: Message E]
+  }
+}
+
+P -> [Seat #0: Message A] : produces
+P -> [Seat #1: Message B] : produces
+P -> [Seat #0: Message C] : produces
+P -> [Seat #1: Message D] : produces
+P -> [Seat #0: Message E] : produces
+
+CG --> [Seat #0: Message A] : consumes
+CG --> [Seat #1: Message B] : consumes
+CG --> [Seat #0: Message C] : consumes
+CG --> [Seat #1: Message D] : consumes
+CG --> [Seat #0: Message E] : consumes
+
+@enduml
