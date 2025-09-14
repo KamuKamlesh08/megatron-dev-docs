@@ -204,43 +204,37 @@ docker compose -f docker-compose.zookeeper.yml down -v
 
 ## 6) Quick Smoke Test (both stacks)
 
-> Use the **internal** listener inside the container (`localhost:9092`) when executing CLI tools via `docker exec`.
+> window docker case - switch to kafka if started it via dokcer
+
+```bash
+docker compose exec -it kafka bash
+# press ctrl+d to exit from here
+```
 
 Create topic:
 
 ```bash
-# KRaft stack
-docker exec -it kafka bash -lc "kafka-topics.sh --create \
-  --topic quickstart --bootstrap-server localhost:9092 \
-  --partitions 1 --replication-factor 1"
+/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --topic quickstart --partitions 1 --replication-factor 1
 
-# ZooKeeper stack
-docker exec -it kafka-zk bash -lc "kafka-topics.sh --create \
-  --topic quickstart --bootstrap-server localhost:9092 \
-  --partitions 1 --replication-factor 1"
 ```
 
 List:
 
 ```bash
-docker exec -it kafka bash -lc "kafka-topics.sh --list --bootstrap-server localhost:9092"
-docker exec -it kafka-zk bash -lc "kafka-topics.sh --list --bootstrap-server localhost:9092"
+/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list
 ```
 
 Produce (inside container):
 
 ```bash
-docker exec -it kafka bash -lc "kafka-console-producer.sh --broker-list localhost:9092 --topic quickstart"
+/opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server kafka:9092 --topic quickstart
 # type a few lines, Ctrl+C to exit
-
-docker exec -it kafka-zk bash -lc "kafka-console-producer.sh --broker-list localhost:9092 --topic quickstart"
 ```
 
 Consume (inside container):
 
 ```bash
-docker exec -it kafka bash -lc "kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic quickstart --from-beginning --timeout-ms 5000"
-docker exec -it kafka-zk bash -lc "kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic quickstart --from-beginning --timeout-ms 5000"
+/opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic quickstart --from-beginning
 ```
 
 ---
